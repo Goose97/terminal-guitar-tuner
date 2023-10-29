@@ -128,7 +128,7 @@ fn calculate_layout(root_rect: Rect) -> [Rect; 3] {
         .direction(Direction::Vertical)
         .constraints(vec![
             Constraint::Max(24),
-            Constraint::Max(12),
+            Constraint::Max(16),
             Constraint::Min(0),
         ])
         .split(root_rect);

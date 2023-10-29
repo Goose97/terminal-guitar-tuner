@@ -2,6 +2,7 @@ use ratatui::buffer::Buffer;
 use ratatui::layout::Rect;
 use ratatui::prelude::Alignment;
 use ratatui::style::{Modifier, Style, Stylize};
+use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, BorderType, Borders, Paragraph, StatefulWidget, Widget};
 
 use super::{app_color, utils, IN_TUNE_RANGE};
@@ -65,6 +66,7 @@ impl StatefulWidget for TuningBar {
         render_accept_range(&state, &bar_area, buf);
         render_current_pitch(&state, &bar_area, buf);
         render_pitch_difference(&state, &bar_area, buf);
+        render_in_tune_text(&bar_area, buf);
     }
 }
 
@@ -130,7 +132,7 @@ fn render_pitch_difference(state: &State, bar_area: &Rect, buf: &mut Buffer) {
         utils::center_rect_in_container(&mut rect, bar_area);
         rect = utils::transform(rect, 0, -2);
 
-        let diff = pitch_difference(state.center, pitch);
+        let diff = pitch_difference(state, pitch);
         let mut text = Paragraph::new(diff).alignment(Alignment::Center);
 
         if state.accept_range.0 <= pitch && state.accept_range.1 >= pitch {
@@ -143,16 +145,49 @@ fn render_pitch_difference(state: &State, bar_area: &Rect, buf: &mut Buffer) {
     }
 }
 
-fn pitch_difference(target: f64, current: f64) -> String {
-    let rounded = ((current - target) / 0.5).floor() * 0.5;
-
-    if rounded > 0.0 {
-        format!("+{}", rounded)
-    } else if rounded < 0.0 {
-        rounded.to_string()
+fn pitch_difference(state: &State, current: f64) -> String {
+    let mut in_cents = if current > state.center {
+        (current - state.center) / (state.max - state.center) * 100.0
     } else {
-        String::from("0")
+        -(state.center - current) / (state.center - state.min) * 100.0
+    };
+
+    in_cents = (in_cents / 0.5).round() * 0.5;
+
+    if in_cents > 0.0 {
+        format!("+{} cents", in_cents)
+    } else if in_cents < 0.0 {
+        format!("{} cents", in_cents)
+    } else {
+        String::from("0 cents")
     }
+}
+
+fn render_in_tune_text(bar_area: &Rect, buf: &mut Buffer) {
+    let mut rect = Rect {
+        x: 0,
+        y: 0,
+        width: bar_area.width,
+        height: 2,
+    };
+
+    utils::center_rect_in_container(&mut rect, bar_area);
+    rect = utils::transform(rect, 0, 4);
+
+    let text = vec![
+        Line::from(vec![
+            Span::from("In tune range: "),
+            Span::styled(
+                format!("{} cents", IN_TUNE_RANGE),
+                Style::default().add_modifier(Modifier::BOLD),
+            ),
+        ]),
+        Line::from("(100 cents = 1 semitone)"),
+    ];
+
+    Paragraph::new(text)
+        .alignment(Alignment::Center)
+        .render(rect, buf);
 }
 
 impl TuningBar {
