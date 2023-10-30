@@ -13,6 +13,7 @@ use app_state::AppState;
 use instructions::Instruction;
 use tuning_bar::TuningBar;
 use tuning_notes::TuningNotes;
+use tuning_pegs::TuningPegs;
 
 mod app_color;
 mod app_state;
@@ -20,6 +21,7 @@ mod instructions;
 mod loading_icon;
 mod tuning_bar;
 mod tuning_notes;
+mod tuning_pegs;
 mod utils;
 
 pub static mut FRAME_COUNT: usize = 0;
@@ -42,7 +44,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                 FRAME_COUNT += 1;
             }
 
-            let [tuning_strings_rect, tuning_pegs_rect, tuning_bar_rect] =
+            let [tuning_strings_rect, instructions_rect, tuning_bar_rect] =
                 calculate_layout(f.size());
 
             // Background
@@ -63,10 +65,10 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
             f.render_widget(
                 Block::default()
                     .borders(Borders::ALL)
-                    .title("Tuning pegs")
+                    .title("Instructions")
                     .border_type(BorderType::Rounded)
                     .border_style(Style::default().fg(app_color::BORDER)),
-                tuning_pegs_rect,
+                instructions_rect,
             );
 
             f.render_widget(
@@ -89,8 +91,16 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                 &mut app_state.tuning_notes,
             );
 
-            f.render_widget(Instruction::new(), layout[1]);
+            f.render_stateful_widget(
+                TuningPegs::new(),
+                layout[1],
+                &mut tuning_pegs::State {
+                    focus_peg: current_peg_index(&app_state),
+                },
+            );
             f.render_stateful_widget(TuningBar::new(), tuning_bar_rect, &mut app_state.tuning_bar);
+
+            f.render_widget(Instruction::new(), instructions_rect);
         })?;
 
         match poll_terminal_event()? {
@@ -113,10 +123,27 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
     Ok(())
 }
 
+fn current_peg_index(state: &AppState) -> Option<usize> {
+    match state.tuning_notes.detecting_note {
+        Some(note) => {
+            let index = state
+                .tuning_notes
+                .notes
+                .iter()
+                .position(|item| *item == note)
+                .unwrap();
+
+            Some(index)
+        }
+
+        None => None,
+    }
+}
+
 // Layout is as follow
 //  ------------------------------------
 // |                 |                  |
-// |  tuning_strings |    tuning_pegs   |
+// |  tuning_strings |    instructions  |
 // |       (0)       |       (1)        |
 // |                 |                  |
 // |------------------------------------|
