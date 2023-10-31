@@ -6,11 +6,11 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use cli_guitar_tuner::guitar::Note;
-use cli_guitar_tuner::pitch_detector;
-use cli_guitar_tuner::recorder::Recorder;
-use cli_guitar_tuner::ui;
-use cli_guitar_tuner::{AppEvent, SAMPLE_RATE};
+use terminal_guitar_tuner::guitar::Note;
+use terminal_guitar_tuner::pitch_detector;
+use terminal_guitar_tuner::recorder::Recorder;
+use terminal_guitar_tuner::ui;
+use terminal_guitar_tuner::{AppEvent, SAMPLE_RATE};
 
 const FRAME_RATE_PER_SECOND: u64 = 2;
 

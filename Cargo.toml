@@ -1,5 +1,5 @@
 [package]
-name = "cli_guitar_tuner"
+name = "terminal_guitar_tuner"
 version = "0.1.0"
 edition = "2021"
 

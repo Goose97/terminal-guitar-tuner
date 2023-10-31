@@ -4,8 +4,8 @@ use std::io::Write;
 use std::thread;
 use std::time::Duration;
 
-use cli_guitar_tuner::recorder::Recorder;
-use cli_guitar_tuner::SAMPLE_RATE;
+use terminal_guitar_tuner::recorder::Recorder;
+use terminal_guitar_tuner::SAMPLE_RATE;
 
 // Record into fixtures
 fn main() -> Result<()> {

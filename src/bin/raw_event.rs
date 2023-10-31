@@ -2,10 +2,10 @@ use anyhow::Result;
 use std::thread;
 use std::time::{Duration, Instant};
 
-use cli_guitar_tuner::guitar::{get_note_frequency, Note};
-use cli_guitar_tuner::pitch_detector;
-use cli_guitar_tuner::recorder::Recorder;
-use cli_guitar_tuner::{AppEvent, SAMPLE_RATE};
+use terminal_guitar_tuner::guitar::{get_note_frequency, Note};
+use terminal_guitar_tuner::pitch_detector;
+use terminal_guitar_tuner::recorder::Recorder;
+use terminal_guitar_tuner::{AppEvent, SAMPLE_RATE};
 
 const FRAME_RATE_PER_SECOND: u64 = 2;
 
