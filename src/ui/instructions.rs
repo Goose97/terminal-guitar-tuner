@@ -1,7 +1,7 @@
 use ratatui::buffer::Buffer;
 use ratatui::layout::Rect;
 use ratatui::style::{Modifier, Style};
-use ratatui::text::{Line, Span};
+use ratatui::text::Line;
 use ratatui::widgets::{Paragraph, Widget};
 
 use super::app_color;
@@ -25,21 +25,11 @@ impl Widget for Instruction {
             ),
             Line::from(""),
             Line::from("To use alternative tunings:"),
-            Line::from(vec![
-                Span::from("  1. Use "),
-                Span::styled("j/k", Style::default().add_modifier(Modifier::UNDERLINED)),
-                Span::from(" to select strings"),
-            ]),
-            Line::from(vec![
-                Span::from("  2. Use "),
-                Span::styled("h/l", Style::default().add_modifier(Modifier::UNDERLINED)),
-                Span::from(" to select notes"),
-            ]),
-            Line::from(vec![
-                Span::from("  3. Use "),
-                Span::styled("Esc", Style::default().add_modifier(Modifier::UNDERLINED)),
-                Span::from(" to exit selection"),
-            ]),
+            Line::from("  • j/k: Select strings"),
+            Line::from("  • h/l: Select notes"),
+            Line::from("  • <esc>: Exit selection"),
+            Line::from(""),
+            Line::from("q: Quit"),
         ];
 
         let max_width = text.iter().map(|line| line.width()).max().unwrap();
