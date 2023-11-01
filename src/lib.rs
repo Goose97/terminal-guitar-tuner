@@ -9,6 +9,7 @@ use crate::guitar::Note;
 pub enum AppEvent {
     PitchDetected(Note, f64),
     NoPitchDetected,
+    AudioRecorded(Vec<f64>),
     DownButtonPressed,
     UpButtonPressed,
     LeftButtonPressed,

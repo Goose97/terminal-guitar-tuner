@@ -76,12 +76,12 @@ impl Recorder {
     }
 
     // Invoke callback on collected samples. Only use the last `limit` samples
-    pub fn with_samples<'a>(&'a self, mut callback: impl FnMut(&[f64]) -> ()) {
+    pub fn with_samples<'a>(&'a self, mut callback: impl FnMut(Vec<f64>) -> ()) {
         let samples = self.samples.lock().unwrap();
         let mut clone = samples.clone();
         drop(samples);
         clone.resize(self.buffer_size, 0.0);
-        callback(&mut clone);
+        callback(clone);
     }
 }
 

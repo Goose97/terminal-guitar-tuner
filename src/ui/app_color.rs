@@ -9,3 +9,4 @@ pub const BACKGROUND_DARK: Color = Color::Rgb(0, 18, 25);
 pub const BACKGROUND_LIGHT: Color = Color::Rgb(242, 232, 207);
 pub const GREEN: Color = Color::Rgb(56, 176, 0);
 pub const RED: Color = Color::Rgb(193, 18, 30);
+pub const BLUE: Color = Color::Rgb(72, 202, 228);

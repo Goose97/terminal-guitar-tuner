@@ -202,7 +202,6 @@ fn infer_note(frequency: f64, tuning_notes: &[Note]) -> Option<Note> {
         .iter()
         .filter_map(|note| {
             let note_frequency = get_note_frequency(note);
-            // println!("Frequency {:?} - note {:}", note_frequency, note);
             let diff = (frequency - note_frequency).abs();
             if diff <= FREQUENCY_MAX_DIFFERENCE {
                 Some((note, diff))

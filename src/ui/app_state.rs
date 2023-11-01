@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use super::{tuning_bar, tuning_notes};
+use super::{audio_graph, tuning_bar, tuning_notes};
 use crate::guitar::Note;
 use crate::AppEvent;
 
@@ -8,6 +8,7 @@ use crate::AppEvent;
 pub struct AppState {
     pub tuning_notes: tuning_notes::State,
     pub tuning_bar: tuning_bar::State,
+    pub audio_graph: audio_graph::State,
 }
 
 impl AppState {
@@ -27,15 +28,17 @@ impl AppState {
         };
 
         let tuning_bar_state = tuning_bar::State::new(&tuning_notes_state.notes[0]);
+        let audio_graph_state = audio_graph::State::new();
 
         AppState {
             tuning_notes: tuning_notes_state,
             tuning_bar: tuning_bar_state,
+            audio_graph: audio_graph_state,
         }
     }
 
     pub fn handle_event(&mut self, event: &AppEvent) {
-        match *event {
+        match event {
             AppEvent::UpButtonPressed => self.tuning_notes.prev_string(),
             AppEvent::DownButtonPressed => self.tuning_notes.next_string(),
             AppEvent::RightButtonPressed => self.tuning_notes.next_note(),
@@ -49,16 +52,16 @@ impl AppState {
                     return;
                 }
 
-                if self.tuning_notes.detecting_note != Some(note) {
-                    self.tuning_notes.detecting_note = Some(note);
-                    self.tuning_bar = tuning_bar::State::new(&note);
+                if self.tuning_notes.detecting_note != Some(*note) {
+                    self.tuning_notes.detecting_note = Some(*note);
+                    self.tuning_bar = tuning_bar::State::new(note);
                 }
 
-                self.tuning_bar.current_pitch = Some(frequency);
+                self.tuning_bar.current_pitch = Some(*frequency);
 
-                if self.tuning_bar.in_tune_range(frequency) {
+                if self.tuning_bar.in_tune_range(*frequency) {
                     if self.tuning_bar.pitch_in_accept_range_once {
-                        self.tuning_notes.tuned_notes.insert(note);
+                        self.tuning_notes.tuned_notes.insert(*note);
                     } else {
                         self.tuning_bar.pitch_in_accept_range_once = true;
                     }
@@ -72,6 +75,7 @@ impl AppState {
                 self.tuning_bar = tuning_bar::State::new(&self.tuning_notes.notes[0]);
             }
 
+            AppEvent::AudioRecorded(data) => self.audio_graph.dataset = data.clone(),
             AppEvent::Quit => (),
         }
     }

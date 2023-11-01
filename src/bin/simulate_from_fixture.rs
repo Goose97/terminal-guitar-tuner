@@ -39,6 +39,7 @@ fn main() -> Result<()> {
 
             thread::sleep(Duration::from_millis(1000));
             let _ = send.send(event);
+            let _ = send.send(AppEvent::AudioRecorded(chunk.to_vec()));
         }
     });
 

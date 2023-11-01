@@ -843,6 +843,7 @@ dependencies = [
  "apodize",
  "cpal",
  "crossterm",
+ "itertools",
  "rand",
  "ratatui",
  "regex",

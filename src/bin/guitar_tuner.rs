@@ -68,6 +68,7 @@ fn main() -> Result<()> {
                 }
 
                 let _ = send.send(event);
+                let _ = send.send(AppEvent::AudioRecorded(samples));
                 thread::sleep(next_frame_deadline - Instant::now());
             });
         }

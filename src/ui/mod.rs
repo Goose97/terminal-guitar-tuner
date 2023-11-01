@@ -1,4 +1,5 @@
 use anyhow::Result;
+use itertools::Itertools;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
@@ -6,10 +7,11 @@ use ratatui::{
     terminal::Terminal,
     widgets::{Block, BorderType, Borders},
 };
-use std::sync::mpsc::Receiver;
+use std::{mem::discriminant, sync::mpsc::Receiver};
 
 use super::AppEvent;
 use app_state::AppState;
+use audio_graph::AudioGraph;
 use instructions::Instruction;
 use tuning_bar::TuningBar;
 use tuning_notes::TuningNotes;
@@ -17,6 +19,7 @@ use tuning_pegs::TuningPegs;
 
 mod app_color;
 mod app_state;
+mod audio_graph;
 mod instructions;
 mod loading_icon;
 mod tuning_bar;
@@ -44,7 +47,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                 FRAME_COUNT += 1;
             }
 
-            let [tuning_strings_rect, instructions_rect, tuning_bar_rect] =
+            let [tuning_strings_rect, instructions_rect, tuning_bar_rect, graph_rect] =
                 calculate_layout(f.size());
 
             // Background
@@ -80,6 +83,15 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                 tuning_bar_rect,
             );
 
+            f.render_widget(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Audio graph")
+                    .border_type(BorderType::Rounded)
+                    .border_style(Style::default().fg(app_color::BORDER)),
+                graph_rect,
+            );
+
             let layout = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints(vec![Constraint::Min(16), Constraint::Percentage(100)])
@@ -101,6 +113,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
             f.render_stateful_widget(TuningBar::new(), tuning_bar_rect, &mut app_state.tuning_bar);
 
             f.render_widget(Instruction::new(), instructions_rect);
+            f.render_stateful_widget(AudioGraph::new(), graph_rect, &mut app_state.audio_graph);
         })?;
 
         match poll_terminal_event()? {
@@ -110,8 +123,12 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
         }
 
         // Drop all events except for the last one
-        let events: Vec<AppEvent> = event_stream.try_iter().collect();
-        if let Some(event) = events.last() {
+        let events: Vec<AppEvent> = event_stream
+            .try_iter()
+            .unique_by(|x| discriminant(x))
+            .collect();
+
+        for event in events.iter() {
             app_state.handle_event(event);
         }
     }
@@ -150,7 +167,7 @@ fn current_peg_index(state: &AppState) -> Option<usize> {
 // |              tuning_bar            |
 // |                 (2)                |
 //  ------------------------------------
-fn calculate_layout(root_rect: Rect) -> [Rect; 3] {
+fn calculate_layout(root_rect: Rect) -> [Rect; 4] {
     let total_layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints(vec![
@@ -165,7 +182,12 @@ fn calculate_layout(root_rect: Rect) -> [Rect; 3] {
         .constraints(vec![Constraint::Percentage(60), Constraint::Percentage(40)])
         .split(total_layout[0]);
 
-    return [upper_half[0], upper_half[1], total_layout[1]];
+    return [
+        upper_half[0],
+        upper_half[1],
+        total_layout[1],
+        total_layout[2],
+    ];
 }
 
 fn poll_terminal_event() -> Result<Option<AppEvent>> {
