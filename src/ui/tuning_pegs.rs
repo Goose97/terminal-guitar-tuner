@@ -1,9 +1,9 @@
 use ratatui::{
     buffer::Buffer,
-    layout::{Alignment, Rect},
-    style::{Color, Modifier, Style, Styled},
+    layout::Rect,
+    style::Style,
     text::{Line, Span},
-    widgets::{Block, BorderType, Borders, Paragraph, StatefulWidget, Widget},
+    widgets::{Paragraph, StatefulWidget, Widget},
 };
 
 use super::app_color;

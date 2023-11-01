@@ -214,6 +214,7 @@ fn infer_note(frequency: f64, tuning_notes: &[Note]) -> Option<Note> {
         .map(|(note, _)| note.clone())
 }
 
+#[allow(dead_code)]
 fn plot_graph(samples: &[f64], index: usize) {
     let filename = format!("debug/frequencies_{}.json", index);
     let mut file = File::create(filename).unwrap();

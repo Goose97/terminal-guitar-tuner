@@ -2,6 +2,7 @@ use std::cmp;
 
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 
+#[allow(dead_code)]
 pub fn max_height(rect: Rect, max: u16) -> Rect {
     let after = Layout::default()
         .direction(Direction::Vertical)
