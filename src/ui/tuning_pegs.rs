@@ -44,14 +44,14 @@ impl StatefulWidget for TuningPegs {
         };
 
         utils::center_rect_in_container(&mut rect, &area);
-        let paragraph = Paragraph::new(text).style(Style::default().fg(app_color::TEXT_LIGHT));
+        let paragraph = Paragraph::new(text).style(Style::default().fg(*app_color::TEXT_LIGHT));
         paragraph.render(rect, buf);
     }
 }
 
 fn peg(state: &State, index: usize) -> Span {
     match state.focus_peg {
-        Some(x) if x == index => Span::styled("⬤", Style::default().fg(app_color::TEXT_LIGHT)),
+        Some(x) if x == index => Span::styled("⬤", Style::default().fg(*app_color::TEXT_LIGHT)),
         _ => Span::from("◯"),
     }
 }

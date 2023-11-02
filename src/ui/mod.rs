@@ -52,7 +52,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
 
             // Background
             f.render_widget(
-                Block::default().style(Style::default().bg(app_color::BACKGROUND_DARK)),
+                Block::default().style(Style::default().bg(*app_color::BACKGROUND_DARK)),
                 f.size(),
             );
 
@@ -61,7 +61,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                     .borders(Borders::ALL)
                     .title("Tuning strings")
                     .border_type(BorderType::Rounded)
-                    .border_style(Style::default().fg(app_color::BORDER)),
+                    .border_style(Style::default().fg(*app_color::BORDER)),
                 tuning_strings_rect,
             );
 
@@ -70,7 +70,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                     .borders(Borders::ALL)
                     .title("Instructions")
                     .border_type(BorderType::Rounded)
-                    .border_style(Style::default().fg(app_color::BORDER)),
+                    .border_style(Style::default().fg(*app_color::BORDER)),
                 instructions_rect,
             );
 
@@ -79,7 +79,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                     .borders(Borders::ALL)
                     .title("Tuning bar")
                     .border_type(BorderType::Rounded)
-                    .border_style(Style::default().fg(app_color::BORDER)),
+                    .border_style(Style::default().fg(*app_color::BORDER)),
                 tuning_bar_rect,
             );
 
@@ -88,7 +88,7 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                     .borders(Borders::ALL)
                     .title("Audio graph")
                     .border_type(BorderType::Rounded)
-                    .border_style(Style::default().fg(app_color::BORDER)),
+                    .border_style(Style::default().fg(*app_color::BORDER)),
                 graph_rect,
             );
 

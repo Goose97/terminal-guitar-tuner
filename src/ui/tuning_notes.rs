@@ -47,19 +47,19 @@ impl StatefulWidget for TuningNotes {
             }
 
             if state.tuned_notes.contains(tuning_note) {
-                surround_block = surround_block.border_style(Style::default().fg(app_color::GREEN));
-                paragraph_style = paragraph_style.fg(app_color::GREEN);
+                surround_block = surround_block.border_style(Style::default().fg(*app_color::GREEN));
+                paragraph_style = paragraph_style.fg(*app_color::GREEN);
                 spans.push(Span::from(" ✓"));
             }
 
             if Some(index) == state.selected_note_index {
                 surround_block = surround_block
-                    .border_style(Style::default().bg(app_color::BACKGROUND_LIGHT))
+                    .border_style(Style::default().bg(*app_color::BACKGROUND_LIGHT))
                     .border_type(BorderType::Thick);
 
                 paragraph_style = paragraph_style
-                    .fg(app_color::TEXT_DARK)
-                    .bg(app_color::BACKGROUND_LIGHT)
+                    .fg(*app_color::TEXT_DARK)
+                    .bg(*app_color::BACKGROUND_LIGHT)
                     .add_modifier(Modifier::BOLD);
 
                 spans.insert(0, Span::from("< "));

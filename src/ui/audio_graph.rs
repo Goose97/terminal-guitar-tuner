@@ -36,13 +36,13 @@ impl StatefulWidget for AudioGraph {
         let datasets = vec![Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(Style::default().fg(app_color::BLUE))
+            .style(Style::default().fg(*app_color::BLUE))
             .data(&dataset)];
 
         let chart = Chart::new(datasets)
             .x_axis(Axis::default().bounds([0.0, dataset.len() as f64]))
             .y_axis(Axis::default().bounds([0.0, 1.0]))
-            .style(Style::default().bg(app_color::BACKGROUND_DARK));
+            .style(Style::default().bg(*app_color::BACKGROUND_DARK));
 
         let mut rect = Rect {
             width: area.width - 16,

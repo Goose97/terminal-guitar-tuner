@@ -844,6 +844,7 @@ dependencies = [
  "cpal",
  "crossterm",
  "itertools",
+ "lazy_static",
  "rand",
  "ratatui",
  "regex",

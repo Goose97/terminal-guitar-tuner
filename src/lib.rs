@@ -1,9 +1,12 @@
+#[macro_use]
+extern crate lazy_static;
+
+use crate::guitar::Note;
+
 pub mod guitar;
 pub mod pitch_detector;
 pub mod recorder;
 pub mod ui;
-
-use crate::guitar::Note;
 
 #[derive(Debug)]
 pub enum AppEvent {

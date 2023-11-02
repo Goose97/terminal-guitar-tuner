@@ -28,7 +28,7 @@ impl StatefulWidget for TuningBar {
         let block = Block::default()
             .borders(Borders::ALL)
             .border_type(BorderType::Double)
-            .border_style(Style::default().fg(app_color::BORDER));
+            .border_style(Style::default().fg(*app_color::BORDER));
 
         let mut bar_area = Rect {
             x: area.x,
@@ -84,7 +84,7 @@ fn render_accept_range(state: &State, bar_area: &Rect, buf: &mut Buffer) {
     let block = Block::default()
         .borders(Borders::ALL)
         .border_type(BorderType::Thick)
-        .border_style(Style::default().fg(app_color::GREEN));
+        .border_style(Style::default().fg(*app_color::GREEN));
     block.render(rect, buf);
 }
 
@@ -97,7 +97,7 @@ fn render_current_pitch(state: &State, bar_area: &Rect, buf: &mut Buffer) {
         let buf_index = bucket_index;
         let buf_chars = ("█", "▀", "▄");
 
-        let style = Style::default().fg(app_color::RED);
+        let style = Style::default().fg(*app_color::RED);
         buf.get_mut(bar_area.x + buf_index, bar_area.y + 1)
             .set_symbol(buf_chars.0)
             .set_style(style);
@@ -136,7 +136,7 @@ fn render_pitch_difference(state: &State, bar_area: &Rect, buf: &mut Buffer) {
         let mut text = Paragraph::new(diff).alignment(Alignment::Center);
 
         if state.accept_range.0 <= pitch && state.accept_range.1 >= pitch {
-            text = text.style(Style::default().fg(app_color::GREEN));
+            text = text.style(Style::default().fg(*app_color::GREEN));
         }
 
         text = text.add_modifier(Modifier::BOLD);
