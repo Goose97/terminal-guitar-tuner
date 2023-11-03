@@ -7,7 +7,7 @@ use std::time::Duration;
 use terminal_guitar_tuner::guitar::Note;
 use terminal_guitar_tuner::pitch_detector;
 use terminal_guitar_tuner::ui;
-use terminal_guitar_tuner::{AppEvent, SAMPLE_RATE};
+use terminal_guitar_tuner::AppEvent;
 
 // Simulate from fixture
 fn main() -> Result<()> {
@@ -31,7 +31,8 @@ fn main() -> Result<()> {
 
     thread::spawn(move || {
         for mut chunk in samples.chunks(chunk_size).into_iter() {
-            let result = pitch_detector::detect_note(&mut chunk, SAMPLE_RATE, &tuning_notes);
+            // Typical sample rate 44,1kHz
+            let result = pitch_detector::detect_note(&mut chunk, 44100, &tuning_notes);
             let event = match result {
                 Ok((note, frequency)) => AppEvent::PitchDetected(note, frequency),
                 Err(_) => AppEvent::NoPitchDetected,

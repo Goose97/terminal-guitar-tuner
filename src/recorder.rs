@@ -5,7 +5,6 @@ use cpal::{Device, SampleFormat, SampleRate, Stream, SupportedStreamConfig};
 use std::sync::{Arc, Mutex};
 
 pub struct Recorder {
-    sample_rate: usize,
     samples: Arc<Mutex<Vec<f64>>>,
     // Maximum size of the samples vec
     buffer_size: usize,
@@ -13,9 +12,8 @@ pub struct Recorder {
 }
 
 impl Recorder {
-    pub fn new(sample_rate: usize, buffer_size: usize) -> Self {
+    pub fn new(buffer_size: usize) -> Self {
         Self {
-            sample_rate,
             samples: Arc::new(Mutex::new(Vec::with_capacity(buffer_size))),
             stream: None,
             buffer_size,
@@ -25,7 +23,7 @@ impl Recorder {
     // Start recording audio and pulse code modulating. Each sample is a number in the range of
     // -1.0..1.0
     // This function will fail if the recording device doesn't support the provided sample rate
-    pub fn record(&mut self) -> Result<()> {
+    pub fn record(&mut self) -> Result<SampleRate> {
         #[cfg(any(
             not(any(
                 target_os = "linux",
@@ -42,8 +40,7 @@ impl Recorder {
             .default_input_device()
             .ok_or(anyhow!("Can't find default input device"))?;
 
-        let config =
-            get_device_input_config(&device, SampleRate(self.sample_rate.try_into().unwrap()));
+        let config = get_device_input_config(&device);
 
         let samples_clone = self.samples.clone();
         let buffer_size = self.buffer_size;
@@ -53,7 +50,7 @@ impl Recorder {
         };
 
         let stream = device.build_input_stream(
-            &config.into(),
+            &config.clone().into(),
             move |data: &[f32], _: &_| {
                 let mut buffer = samples_clone.lock().unwrap();
 
@@ -72,7 +69,7 @@ impl Recorder {
         stream.play()?;
         self.stream = Some(stream);
 
-        Ok(())
+        Ok(config.sample_rate())
     }
 
     // Invoke callback on collected samples. Only use the last `limit` samples
@@ -85,20 +82,16 @@ impl Recorder {
     }
 }
 
-fn get_device_input_config(device: &Device, sample_rate: SampleRate) -> SupportedStreamConfig {
+fn get_device_input_config(device: &Device) -> SupportedStreamConfig {
     let configs = device.supported_input_configs().unwrap();
 
     let config = configs
         .into_iter()
-        .find(|config| {
-            config.channels() == 1
-                && config.max_sample_rate() >= sample_rate
-                && config.min_sample_rate() <= sample_rate
-                && config.sample_format() == SampleFormat::F32
-        })
+        .filter(|config| config.channels() == 1 && config.sample_format() == SampleFormat::F32)
+        .max_by_key(|config| config.max_sample_rate())
         .unwrap();
 
-    config.with_sample_rate(sample_rate)
+    config.with_max_sample_rate()
 }
 
 // Take N elements from tail. Avoid allocation by copying

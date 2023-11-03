@@ -14,7 +14,7 @@ const MAX_FREQUENCY: f64 = 1325.0;
 // 4. Infer the closest note from the peak
 pub fn detect_note(
     samples: &[f64],
-    sampling_rate: usize,
+    sampling_rate: u32,
     tuning_notes: &[Note],
 ) -> Result<(Note, f64)> {
     // Guitar notes have range of 75Hz - 1320Hz (accounted for overtones)
@@ -66,7 +66,7 @@ struct KeyMaxima {
     right_neighbor: Option<f64>,
 }
 
-fn infer_fundamental_frequency(samples: &[f64], sampling_rate: usize) -> Result<f64> {
+fn infer_fundamental_frequency(samples: &[f64], sampling_rate: u32) -> Result<f64> {
     let maximas = key_local_maximas(&samples);
     let best_maxima = pick_maxima(&maximas).ok_or(anyhow!("Can't the best local maxima"))?;
     let interpolated_index = parabolic_interpolation(&best_maxima);
@@ -278,7 +278,7 @@ fn apply_filter(samples: &[f64], filter: &[f64]) -> Vec<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::SAMPLE_RATE;
+    use crate::FIXTURE_SAMPLE_RATE;
     use std::fs;
 
     fn overlap_chunks(samples: &[f64], chunk_size: usize, move_index: usize) -> Vec<Vec<f64>> {
@@ -316,7 +316,7 @@ mod tests {
             .into_iter()
             .take(5)
             .filter(|chunk| chunk.len() == chunk_size)
-            .map(|mut chunk| detect_note(&mut chunk, SAMPLE_RATE, &tuning_notes).unwrap())
+            .map(|mut chunk| detect_note(&mut chunk, FIXTURE_SAMPLE_RATE, &tuning_notes).unwrap())
             .collect()
     }
 

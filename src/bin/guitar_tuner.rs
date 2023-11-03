@@ -10,7 +10,7 @@ use terminal_guitar_tuner::guitar::Note;
 use terminal_guitar_tuner::pitch_detector;
 use terminal_guitar_tuner::recorder::Recorder;
 use terminal_guitar_tuner::ui;
-use terminal_guitar_tuner::{AppEvent, SAMPLE_RATE};
+use terminal_guitar_tuner::AppEvent;
 
 const FRAME_RATE_PER_SECOND: u64 = 2;
 
@@ -30,8 +30,8 @@ fn main() -> Result<()> {
 
         let mut next_frame_deadline = Instant::now();
         let buffer_size = 1 << 12;
-        let mut recorder = Recorder::new(SAMPLE_RATE, buffer_size);
-        recorder.record().unwrap();
+        let mut recorder = Recorder::new(buffer_size);
+        let sample_rate = recorder.record().unwrap();
 
         // Open a file with append option
         let mut debug_log_file = if debug {
@@ -51,7 +51,7 @@ fn main() -> Result<()> {
             next_frame_deadline += Duration::from_millis(1000 / FRAME_RATE_PER_SECOND);
 
             recorder.with_samples(|samples| {
-                let result = pitch_detector::detect_note(&samples, SAMPLE_RATE, &tuning_notes);
+                let result = pitch_detector::detect_note(&samples, sample_rate.0, &tuning_notes);
 
                 let event = match result {
                     Ok((note, frequency)) => AppEvent::PitchDetected(note, frequency),

@@ -3,13 +3,13 @@ use std::fs::File;
 use std::io::Write;
 use std::thread;
 use std::time::Duration;
+use terminal_guitar_tuner::FIXTURE_SAMPLE_RATE;
 
 use terminal_guitar_tuner::recorder::Recorder;
-use terminal_guitar_tuner::SAMPLE_RATE;
 
 // Record into fixtures
 fn main() -> Result<()> {
-    let mut recorder = Recorder::new(SAMPLE_RATE, SAMPLE_RATE * 2);
+    let mut recorder = Recorder::new(FIXTURE_SAMPLE_RATE as usize * 2);
     recorder.record()?;
 
     thread::sleep(Duration::from_millis(2500));
