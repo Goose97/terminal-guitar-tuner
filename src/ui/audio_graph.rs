@@ -1,10 +1,10 @@
-use ratatui::{
-    buffer::Buffer,
-    layout::Rect,
-    style::Style,
-    symbols::Marker,
-    widgets::{Axis, Chart, Dataset, GraphType, StatefulWidget, Widget},
-};
+use ratatui::buffer::Buffer;
+use ratatui::layout::{Alignment, Rect};
+use ratatui::style::{Modifier, Style, Stylize};
+use ratatui::symbols::Marker;
+use ratatui::text::Line;
+use ratatui::widgets::Paragraph;
+use ratatui::widgets::{Axis, Chart, Dataset, GraphType, StatefulWidget, Widget};
 
 use super::app_color;
 use super::utils;
@@ -29,6 +29,32 @@ impl StatefulWidget for AudioGraph {
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         if state.dataset.is_empty() {
             return;
+        }
+
+        // The graph is optional, omit it if there's not enough space
+        if area.height < 4 {
+            return;
+        }
+
+        if area.height < 8 {
+            let mut rect = Rect {
+                x: 0,
+                y: 0,
+                width: area.width,
+                height: 3,
+            };
+
+            utils::center_rect_in_container(&mut rect, &area);
+
+            let paragraph = Paragraph::new(vec![
+                Line::from("Your terminal size is too small"),
+                Line::from("Resize to see the graph"),
+            ])
+            .alignment(Alignment::Center)
+            .style(Style::default().fg(*app_color::TEXT_LIGHT))
+            .add_modifier(Modifier::BOLD);
+
+            return paragraph.render(rect, buf);
         }
 
         let dataset = normalize(&state.dataset);

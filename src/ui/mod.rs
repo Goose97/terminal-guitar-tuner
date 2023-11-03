@@ -13,6 +13,7 @@ use super::AppEvent;
 use app_state::AppState;
 use audio_graph::AudioGraph;
 use instructions::Instruction;
+use insufficient_size_notice::InsufficientSizeNotice;
 use tuning_bar::TuningBar;
 use tuning_notes::TuningNotes;
 use tuning_pegs::TuningPegs;
@@ -21,6 +22,7 @@ mod app_color;
 mod app_state;
 mod audio_graph;
 mod instructions;
+mod insufficient_size_notice;
 mod loading_icon;
 mod tuning_bar;
 mod tuning_notes;
@@ -31,6 +33,9 @@ pub static mut FRAME_COUNT: usize = 0;
 
 // In cents. 100 cents is 1 semitone
 pub const IN_TUNE_RANGE: f64 = 8.0;
+
+pub const MIN_REQUIRED_WIDTH: u16 = 90;
+pub const MIN_REQUIRED_HEIGHT: u16 = 35;
 
 pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
     // startup: Enable raw mode for the terminal, giving us fine control over user input
@@ -47,13 +52,21 @@ pub fn render(event_stream: Receiver<AppEvent>) -> Result<()> {
                 FRAME_COUNT += 1;
             }
 
+            let frame_rect = f.size();
+
+            if frame_rect.width < MIN_REQUIRED_WIDTH || frame_rect.height < MIN_REQUIRED_HEIGHT {
+                let notice = InsufficientSizeNotice::new();
+                f.render_widget(notice, f.size());
+                return;
+            }
+
             let [tuning_strings_rect, instructions_rect, tuning_bar_rect, graph_rect] =
-                calculate_layout(f.size());
+                calculate_layout(frame_rect);
 
             // Background
             f.render_widget(
                 Block::default().style(Style::default().bg(*app_color::BACKGROUND_DARK)),
-                f.size(),
+                frame_rect,
             );
 
             f.render_widget(
