@@ -5,7 +5,8 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, BorderType, Borders, Paragraph, StatefulWidget, Widget},
 };
-use std::{collections::HashSet, ops::Rem};
+use std::collections::HashSet;
+use std::ops::Rem;
 
 use super::app_color;
 use super::loading_icon::LoadingIcon;
@@ -47,7 +48,8 @@ impl StatefulWidget for TuningNotes {
             }
 
             if state.tuned_notes.contains(tuning_note) {
-                surround_block = surround_block.border_style(Style::default().fg(*app_color::GREEN));
+                surround_block =
+                    surround_block.border_style(Style::default().fg(*app_color::GREEN));
                 paragraph_style = paragraph_style.fg(*app_color::GREEN);
                 spans.push(Span::from(" ✓"));
             }

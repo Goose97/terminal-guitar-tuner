@@ -1,13 +1,12 @@
 use anyhow::Result;
 use itertools::Itertools;
-use ratatui::{
-    backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout, Rect},
-    style::Style,
-    terminal::Terminal,
-    widgets::{Block, BorderType, Borders},
-};
-use std::{mem::discriminant, sync::mpsc::Receiver};
+use ratatui::backend::CrosstermBackend;
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::style::Style;
+use ratatui::terminal::Terminal;
+use ratatui::widgets::{Block, BorderType, Borders};
+use std::mem::discriminant;
+use std::sync::mpsc::Receiver;
 
 use super::AppEvent;
 use app_state::AppState;
