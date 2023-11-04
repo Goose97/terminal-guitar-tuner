@@ -1,7 +1,7 @@
 <div align="center">A simple guitar tuner in your terminal</div>
 <br>
 
-![terminal_guitar_tuner_demo](https://github.com/Goose97/terminal-guitar-tuner/assets/35915460/f9dc4dd6-3e24-49b3-88ab-4b7ebbe36e45)
+![render1699094556281](https://github.com/Goose97/terminal-guitar-tuner/assets/35915460/c4f17e2d-d93c-40dd-8236-b140cbf1416b)
 
 ## Installation
 
