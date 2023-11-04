@@ -4,7 +4,11 @@
 ![terminal_guitar_tuner_demo](https://github.com/Goose97/terminal-guitar-tuner/assets/35915460/f9dc4dd6-3e24-49b3-88ab-4b7ebbe36e45)
 
 ## Installation
-Coming soon
+
+Download binary [here](https://github.com/Goose97/terminal-guitar-tuner/releases/tag/v0.1.0). Supported platforms:
+
+- macOS
+- Linux: coming soon
 
 ## Credits
 
