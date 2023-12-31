@@ -5,10 +5,16 @@
 
 ## Installation
 
-Download binary [here](https://github.com/Goose97/terminal-guitar-tuner/releases/tag/v0.1.0). Supported platforms:
+### macOS
 
-- macOS
-- Linux: coming soon
+```
+brew tap goose97/terminal-guitar-tuner https://github.com/Goose97/terminal-guitar-tuner
+brew install goose97/terminal-guitar-tuner/terminal-guitar-tuner
+```
+
+Since it's a self-host Homebrew formula, Apple won't trust application from unidentified developers. You will need to allow this application in the "Security & Privacy" settings.
+
+### Linux: coming soon
 
 ## Credits
 
